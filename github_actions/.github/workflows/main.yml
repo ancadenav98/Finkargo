@@ -1,18 +1,21 @@
+#Nombre del pipeline del test de Finkargo
 name: CI/CD Pipeline para app Flask prueba Finkargo
 
+#Se definen los eventos que servirán como triggers para el pipeline en este caso con push en la rama main o pull request en main
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+#Defino los jobs que van a definir el flujo
 jobs:
+#Defino el job que tendŕa las 3 etapas y defino el runner en un entorno de ubuntu
   build-test-deploy:
     runs-on: ubuntu-latest
-
+#Se definen los pasos a realizar en el job 
     steps:
     - uses: actions/checkout@v3
-
+#Se hace el setup de la versión de python y se instalan las dependencias
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -22,15 +25,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
+#Se corren los test que se asume están definidos en el proyecto de python 
     - name: Run tests
       run: |
         python -m pytest
-
+#Se crea la imagen del proyecto a partir del dockerfile que se asume está definido y correctamente configurado en el proyecto
     - name: Build Docker image
       run: |
         docker build -t my-flask-app .
-
+#Para poder inicial sesión con un usuario en la cuenta de AWS se utilizan secret y access key del usuario con los permisos necesarios para utilizar ECR y ECS
+#Se propone el uso de secretos para no exponen información sensitiva directamente en el template del pipeline
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -38,7 +42,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-
+#Se hace login en el repositorio de ECR para hacer push de la imagen creada 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -47,7 +51,7 @@ jobs:
       run: |
         docker tag my-flask-app:latest ${{ steps.login-ecr.outputs.registry }}/my-flask-app:latest
         docker push ${{ steps.login-ecr.outputs.registry }}/my-flask-app:latest
-
+#Finalmente se hace el despliegue del nuevo servicio en el cluster de ECS
     - name: Deploy to ECS
       if: github.ref == 'refs/heads/main'
       run: |
