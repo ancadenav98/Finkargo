@@ -1,4 +1,4 @@
-# Arquitectura de Red VPC con NAT en AWS usando Terraform
+# Arquitectura de VPC con NAT Instance en AWS
 
 Este proyecto Terraform implementa una arquitectura de red básica en AWS que incluye una VPC, subredes públicas y privadas, una instancia NAT y un Internet Gateway.  El diseño permite que las instancias en las subredes privadas accedan a Internet a través de la instancia NAT, mientras que las instancias en las subredes públicas tienen acceso directo.
 
