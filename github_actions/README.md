@@ -1,3 +1,5 @@
+# El código utilizado es un ejemplo de proyecto de flask tomado del repositorio https://github.com/XD-DENG/flask-example y utilizado para fines del test.
+
 # flask-example
 
 A minimal web app developed with [Flask](http://flask.pocoo.org/) framework. 
