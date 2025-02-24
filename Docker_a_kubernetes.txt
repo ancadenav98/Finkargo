@@ -1,0 +1,25 @@
+En primera instancia es recomendable seguir los siguientes pasos para crear el dockerfile de nuestro proyecto:
+  -Definir variables de entorno.
+  -Exponer el puerto del servicio.
+  -Definir un punto de entrada o comando.
+
+A continuación presento un ejemplo de estructura de Dockerfile
+
+-------------------------------
+FROM python:3.9-slim-buster
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8080
+
+CMD ["python", "app.py"]
+-------------------------------
+
+Luego debe hacerse el build de la imagen de Docker y almacenarlo en un repositorio (Por ejemplo DockerHub o ECR en AWS)
+
+Finalmente en el template de yml de despliegue de Kubernetes definir la ubicación de la imagen del Docker que será utilizada para el despliegue.
