@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: finkargo-python-app
+  namespace: NS-Prod-Finkargo
+  labels:
+    app.kubernetes.io/team: DevOps
+    app.kubernetes.io/company: Finkargo
+    app.kubernetes.io/stage: Production
+    app.kubernetes.io/group: Backend
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: finkargo-python-app
+  template:
+    metadata:
+      labels:
+        app: finkargo-python-app
+        app.kubernetes.io/team: DevOps
+        app.kubernetes.io/company: Finkargo
+        app.kubernetes.io/stage: Production
+        app.kubernetes.io/group: Backend
+    spec:
+      containers:
+      - name: python-container
+        image: python:3.9.13-buster
+        resources:
+          limits:
+            memory: "150Mi"
+            cpu: "1"
+        ports:
+        - containerPort: 8080
